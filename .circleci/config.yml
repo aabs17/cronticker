@@ -16,10 +16,40 @@ jobs:
       - run:
           command: npm install jest-junit
       - run:
+          name: Create test-results directory
+          command: mkdir -p ./test-results
+      - run:
           name: Run tests
           command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit
+      - run:
+          name: List test-results directory
+          command: ls -la ./test-results
       - store_test_results:
           path: ./test-results/
+  build:
+    docker:
+      - image: circleci/python:3.9  # Usa una imagen base con Docker preinstalado
+    environment:
+      DOCKER_IMAGE: abts17/cron-ticker:pez
+    steps:
+      - checkout  # Clona el repositorio
+
+      - setup_remote_docker  # Habilita el entorno de Docker
+
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t $DOCKER_IMAGE .
+
+      - run:
+          name: Login to Docker Hub
+          command: |
+            echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
+      - run:
+          name: Push Docker image
+          command: |
+            docker push $DOCKER_IMAGE
   deploy:
     # This is an example deploy job, not actually used by the workflow
     docker:
@@ -33,6 +63,7 @@ workflows:
   build-and-test:
     jobs:
       - test-node
+      - build
     # - deploy:
     #     requires:
     #       - test-node
