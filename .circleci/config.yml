@@ -57,6 +57,9 @@ jobs:
     steps:
       # Replace this with steps to deploy to users
       - run:
+          name: Check list
+          command: ls -la
+      - run:
           name: deploy
           command: ./deploy.sh
 workflows:
