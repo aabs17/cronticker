@@ -56,6 +56,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout  # Clona el repositorio
+      - setup_remote_docker  # Habilita el entorno de Docker remoto
       - run:
           name: Check list
           command: ls -la
@@ -72,3 +73,8 @@ workflows:
       - deploy:
           requires:
             - test-node
+          filters:
+            branches:
+              ignore: /.*/
+              only:
+                - main
