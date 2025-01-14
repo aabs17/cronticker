@@ -55,15 +55,31 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
-      # Replace this with steps to deploy to users
+      - checkout  # Clona el repositorio
+      - setup_remote_docker  # Habilita el entorno de Docker remoto
+      - run:
+          name: Check list
+          command: ls -la
       - run:
           name: deploy
-          command: '#e.g. ./deploy.sh'
+          command: ./deploy.sh
 workflows:
   build-and-test:
     jobs:
-      - test-node
-      - build
-    # - deploy:
-    #     requires:
-    #       - test-node
+      - test-node:
+          filters:
+                branches:
+                  ignore: /.*/
+                  only:
+                    - main
+      # - build:
+      #     requires:
+      #       - test-node
+      - deploy:
+          requires:
+            - test-node
+          filters:
+            branches:
+              ignore: /.*/
+              only:
+                - main
