@@ -55,7 +55,7 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
-      # Replace this with steps to deploy to users
+      - checkout  # Clona el repositorio
       - run:
           name: Check list
           command: ls -la
